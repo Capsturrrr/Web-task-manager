@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Task Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="taskstyle.css">
+</head>
+<body>
+
+<div class="bg-shapes">
+  <div class="shape shape-1"></div>
+  <div class="shape shape-2"></div>
+  <div class="shape shape-3"></div>
+</div>
+
+<div class="app-wrapper">
+
+  <header class="app-header">
+    <div class="header-top">
+      <div class="logo-mark">STM</div>
+      <div class="date-display" id="dateDisplay"></div>
+    </div>
+    <h1 class="app-title">Smart Task<br><em>Manager</em></h1>
+    <p class="app-subtitle">Stay focused. Stay minimal.</p>
+  </header>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-number" id="statTotal">0</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-card">
+      <span class="stat-number" id="statPending">0</span>
+      <span class="stat-label">Pending</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-card">
+      <span class="stat-number" id="statDone">0</span>
+      <span class="stat-label">Done</span>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <span class="progress-label" id="progressLabel">0% complete</span>
+  </div>
+
+  <div class="input-card">
+    <div class="input-row">
+      <input type="text" id="taskInput" placeholder="What needs to be done?" autocomplete="off">
+    </div>
+    <div class="input-meta">
+      <div class="priority-group">
+        <button class="priority-btn active" data-priority="low">Low</button>
+        <button class="priority-btn" data-priority="medium">Med</button>
+        <button class="priority-btn" data-priority="high">High</button>
+      </div>
+      <input type="date" id="dueDateInput" class="date-input">
+      <button id="addTask" class="add-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Task
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="pending">Pending</button>
+    <button class="filter-btn" data-filter="completed">Completed</button>
+    <button class="filter-btn" data-filter="high">🔴 High</button>
+  </div>
+
+  <ul id="taskList" class="task-list"></ul>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
