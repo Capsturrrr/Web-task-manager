@@ -56,4 +56,4 @@ jobs:
           path: dist
       - if: steps.enabled.outputs.ok == 'true'
         id: pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
