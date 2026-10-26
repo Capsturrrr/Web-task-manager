@@ -92,3 +92,7 @@ The build uses relative paths, so `dist/` also works on any static host.
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
+
+## Licence
+
+MIT. See [LICENSE](LICENSE).
