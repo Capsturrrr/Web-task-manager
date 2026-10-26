@@ -525,7 +525,27 @@ body {
   transition: opacity 0.2s;
 }
 
-.task-item:hover .task-actions { opacity: 1; }
+.task-item:hover .task-actions,
+.task-item:focus-within .task-actions { opacity: 1; }
+
+/* Inline edit field that replaces the task text */
+.task-edit {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--accent);
+  outline: none;
+  padding: 0 0 2px;
+}
+
+button:focus-visible,
+.date-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 .action-btn {
   width: 30px; height: 30px;
