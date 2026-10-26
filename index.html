@@ -1,86 +1,192 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Task Manager</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="taskstyle.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A minimal task manager that works offline." />
+    <meta name="theme-color" content="#f7f5f2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <title>Smart Task Manager</title>
+    <script>
+      // Apply a saved theme before first paint so dark mode never flashes light.
+      try {
+        const t = localStorage.getItem('stm.theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#taskInput">Skip to add a task</a>
 
-<div class="bg-shapes">
-  <div class="shape shape-1"></div>
-  <div class="shape shape-2"></div>
-  <div class="shape shape-3"></div>
-</div>
-
-<div class="app-wrapper">
-
-  <header class="app-header">
-    <div class="header-top">
-      <div class="logo-mark">STM</div>
-      <div class="date-display" id="dateDisplay"></div>
+    <div class="bg-shapes" aria-hidden="true">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
     </div>
-    <h1 class="app-title">Smart Task<br><em>Manager</em></h1>
-    <p class="app-subtitle">Stay focused. Stay minimal.</p>
-  </header>
 
-  <div class="stats-row">
-    <div class="stat-card">
-      <span class="stat-number" id="statTotal">0</span>
-      <span class="stat-label">Total</span>
+    <div class="app-wrapper">
+      <header class="app-header">
+        <div class="header-top">
+          <div class="logo-mark" aria-hidden="true">STM</div>
+          <div class="header-right">
+            <div class="date-display" id="dateDisplay"></div>
+            <button type="button" class="icon-btn" id="themeToggle" aria-label="Theme: system">
+              <span aria-hidden="true" id="themeIcon"></span>
+            </button>
+          </div>
+        </div>
+        <h1 class="app-title">Smart Task<br /><em>Manager</em></h1>
+        <p class="app-subtitle">Stay focused. Stay minimal.</p>
+      </header>
+
+      <main>
+        <section class="stats-row" aria-label="Progress">
+          <div class="stat-card">
+            <span class="stat-number" id="statTotal">0</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="stat-card">
+            <span class="stat-number" id="statPending">0</span>
+            <span class="stat-label">Pending</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="stat-card">
+            <span class="stat-number" id="statDone">0</span>
+            <span class="stat-label">Done</span>
+          </div>
+        </section>
+
+        <div class="progress-wrap">
+          <div
+            class="progress-bar"
+            id="progressBar"
+            role="progressbar"
+            aria-label="Tasks completed"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          >
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <span class="progress-label" id="progressLabel" aria-hidden="true">0% complete</span>
+        </div>
+
+        <form class="input-card" id="addForm" autocomplete="off">
+          <div class="input-row">
+            <label class="visually-hidden" for="taskInput">New task</label>
+            <input
+              type="text"
+              id="taskInput"
+              placeholder="What needs to be done?"
+              maxlength="500"
+              enterkeyhint="done"
+            />
+          </div>
+          <div class="input-meta">
+            <div class="priority-group" role="radiogroup" aria-label="Priority">
+              <button
+                type="button"
+                class="priority-btn active"
+                data-priority="low"
+                role="radio"
+                aria-checked="true"
+              >
+                Low
+              </button>
+              <button
+                type="button"
+                class="priority-btn"
+                data-priority="medium"
+                role="radio"
+                aria-checked="false"
+                tabindex="-1"
+              >
+                Med
+              </button>
+              <button
+                type="button"
+                class="priority-btn"
+                data-priority="high"
+                role="radio"
+                aria-checked="false"
+                tabindex="-1"
+              >
+                High
+              </button>
+            </div>
+            <label class="visually-hidden" for="dueDateInput">Due date</label>
+            <input type="date" id="dueDateInput" class="date-input" />
+            <button type="submit" id="addTask" class="add-btn">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                aria-hidden="true"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add Task
+            </button>
+          </div>
+        </form>
+
+        <div class="toolbar" role="search">
+          <label class="visually-hidden" for="searchInput">Search tasks</label>
+          <input type="search" id="searchInput" class="search-input" placeholder="Search tasks" />
+          <label class="visually-hidden" for="sortSelect">Sort by</label>
+          <select id="sortSelect" class="sort-select">
+            <option value="manual">My order</option>
+            <option value="due">Due date</option>
+            <option value="priority">Priority</option>
+            <option value="created">Newest</option>
+          </select>
+        </div>
+
+        <div class="filter-bar" role="group" aria-label="Show">
+          <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">
+            All
+          </button>
+          <button type="button" class="filter-btn" data-filter="pending" aria-pressed="false">
+            Pending
+          </button>
+          <button type="button" class="filter-btn" data-filter="completed" aria-pressed="false">
+            Completed
+          </button>
+          <button type="button" class="filter-btn" data-filter="high" aria-pressed="false">
+            <span aria-hidden="true">🔴 </span>High
+          </button>
+        </div>
+
+        <ul id="taskList" class="task-list" aria-label="Tasks"></ul>
+
+        <div class="footer-actions">
+          <button type="button" class="link-btn" id="clearDone">Clear completed</button>
+          <span class="footer-sep" aria-hidden="true">·</span>
+          <button type="button" class="link-btn" id="exportBtn">Export backup</button>
+          <span class="footer-sep" aria-hidden="true">·</span>
+          <button type="button" class="link-btn" id="importBtn">Import backup</button>
+          <input type="file" id="importFile" accept="application/json,.json" hidden />
+        </div>
+        <p class="hint">
+          Shortcuts: <kbd>/</kbd> search · <kbd>n</kbd> new task · double-click to edit · focus a
+          handle and press ↑ ↓ to move · <kbd>Ctrl</kbd>+<kbd>Z</kbd> undo
+        </p>
+      </main>
     </div>
-    <div class="stat-divider"></div>
-    <div class="stat-card">
-      <span class="stat-number" id="statPending">0</span>
-      <span class="stat-label">Pending</span>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+      <span id="toastText"></span>
+      <button type="button" class="toast-btn" id="toastAction" hidden>Undo</button>
     </div>
-    <div class="stat-divider"></div>
-    <div class="stat-card">
-      <span class="stat-number" id="statDone">0</span>
-      <span class="stat-label">Done</span>
-    </div>
-  </div>
+    <div class="visually-hidden" id="announcer" aria-live="polite" aria-atomic="true"></div>
 
-  <div class="progress-wrap">
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <span class="progress-label" id="progressLabel">0% complete</span>
-  </div>
-
-  <div class="input-card">
-    <div class="input-row">
-      <input type="text" id="taskInput" placeholder="What needs to be done?" autocomplete="off">
-    </div>
-    <div class="input-meta">
-      <div class="priority-group">
-        <button class="priority-btn active" data-priority="low">Low</button>
-        <button class="priority-btn" data-priority="medium">Med</button>
-        <button class="priority-btn" data-priority="high">High</button>
-      </div>
-      <input type="date" id="dueDateInput" class="date-input">
-      <button id="addTask" class="add-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Task
-      </button>
-    </div>
-  </div>
-
-  <div class="filter-bar">
-    <button class="filter-btn active" data-filter="all">All</button>
-    <button class="filter-btn" data-filter="pending">Pending</button>
-    <button class="filter-btn" data-filter="completed">Completed</button>
-    <button class="filter-btn" data-filter="high">🔴 High</button>
-  </div>
-
-  <ul id="taskList" class="task-list"></ul>
-
-</div>
-
-<script src="script.js"></script>
-</body>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

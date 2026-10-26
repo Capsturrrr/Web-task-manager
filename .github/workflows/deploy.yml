@@ -1,0 +1,59 @@
+name: deploy
+# Publishes the app to GitHub Pages. Needs a one-time setting:
+# repo Settings > Pages > Build and deployment > Source: "GitHub Actions".
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Only ship code that passed CI.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      # Until Pages is switched on, skip quietly instead of failing every run.
+      - id: enabled
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/${{ github.repository }}/pages" --jq .build_type | grep -qx workflow; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::GitHub Pages is not set to deploy from Actions yet (Settings > Pages > Source: GitHub Actions). Skipping deploy."
+          fi
+      - if: steps.enabled.outputs.ok == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - if: steps.enabled.outputs.ok == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.enabled.outputs.ok == 'true'
+        run: npm ci && npm run build
+      - if: steps.enabled.outputs.ok == 'true'
+        uses: actions/configure-pages@v5
+      - if: steps.enabled.outputs.ok == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - if: steps.enabled.outputs.ok == 'true'
+        id: pages
+        uses: actions/deploy-pages@v4
