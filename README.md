@@ -4,6 +4,11 @@
 
 A minimal, offline-first task manager. Built with TypeScript and Vite, no framework, and about 10 KB of JavaScript once compressed.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png" />
+  <img src="docs/screenshot-light.png" alt="Smart Task Manager with five sample tasks, the add-task form, search and filters" width="720" />
+</picture>
+
 ## Features
 
 - **Tasks:** add with a priority and optional due date, complete, edit inline, delete
